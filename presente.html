@@ -23,6 +23,20 @@ p{text-align:center;font-size:20px;margin-bottom:30px;}
 .voltar{position:absolute;top:20px;left:20px;font-size:40px;color:white;cursor:pointer;}
 .particle{position:absolute;font-size:22px;pointer-events:none;animation:explode 1s linear forwards;}
 @keyframes explode{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--x),var(--y));}}
+
+/* ASSINATURA NO CANTO */
+#assinatura{
+position:fixed;
+bottom:5px;
+right:5px;
+font-size:12px;
+color:#333;
+opacity:0.5;
+cursor:pointer;
+z-index:1001;
+transition:opacity 0.3s;
+}
+#assinatura:hover{opacity:1;}
 </style>
 </head>
 <body>
@@ -53,6 +67,9 @@ Obrigado por tudo que você fez e continua fazendo por mim. Te amo muito!
 <img src="foto6.jpg" class="foto primeiro">
 <img src="foto7.jpg" class="foto">
 <img src="foto8.jpg" class="foto">
+
+<!-- ASSINATURA -->
+<div id="assinatura">Criado por Alisson Da Cruz Silva</div>
 
 <div class="viewer" id="viewer">
 <div class="voltar" onclick="fechar()">⬅</div>
@@ -120,6 +137,7 @@ setTimeout(()=>particle.remove(),1000)
 document.addEventListener("click",(e)=>{
 if(e.target.classList.contains("foto")) return
 if(e.target.classList.contains("voltar")) return
+if(e.target.id==='assinatura') return
 explodirCoracoes(e.clientX,e.clientY)
 })
 
@@ -163,6 +181,14 @@ document.getElementById("fraseEncontro").style.display="block"
 },300)
 }
 })
+})
+
+/* ASSINATURA CLIQUE */
+document.getElementById('assinatura').addEventListener('click',()=>{
+imagemGrande.src='minha_foto.jpg'; // coloque aqui sua foto
+viewer.style.display='flex';
+document.getElementById("primeiroTexto").style.display="none";
+document.getElementById("fraseEncontro").style.display="none";
 })
 
 function fechar(){
