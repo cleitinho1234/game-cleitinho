@@ -28,8 +28,8 @@ function generatePlatform(x, y, width, height){
     platforms.push({x, y, width, height});
 }
 
-// Plataforma inicial
-generatePlatform(0, 360, 800, 40); // chão inicial
+// --- Chão inicial ---
+generatePlatform(0, 360, 800, 40);
 
 // --- Moedas ---
 let coins = [];
@@ -48,25 +48,27 @@ let cameraX = 0;
 let speed = 3;
 let score = 0;
 
-// --- Gerar plataformas e moedas à frente ---
+// --- Gerar plataformas e chão à frente ---
 function spawnPlatformsAndCoins(){
     let lastPlatformX = platforms.length > 0 ? platforms[platforms.length-1].x + platforms[platforms.length-1].width : 0;
 
     while(lastPlatformX < cameraX + canvasWidth + 200){
-        // --- Chão contínuo ---
-        generatePlatform(lastPlatformX, 360, 200, 40); // chão infinito
+        // --- Chão sólido e contínuo ---
+        generatePlatform(lastPlatformX, 360, 200, 40);
 
-        // --- Plataforma aleatória acima do chão ---
-        const width = 80 + Math.random()*100;
-        const gap = 50 + Math.random()*100;
-        const x = lastPlatformX + gap;
-        const y = 200 + Math.random()*100;
-        generatePlatform(x, y, width, 20);
-
-        // Gerar moedas na plataforma aleatória
-        generateCoinsForPlatform({x, y, width, height:20});
-
-        lastPlatformX = x + width;
+        // --- Plataformas aleatórias acima do chão (menos frequentes) ---
+        if(Math.random() < 0.6){ // só gerar algumas
+            const width = 80 + Math.random()*100;
+            const gap = 50 + Math.random()*100;
+            const x = lastPlatformX + gap;
+            const y = 200 + Math.random()*100;
+            generatePlatform(x, y, width, 20);
+            generateCoinsForPlatform({x, y, width, height:20});
+            lastPlatformX = x + width;
+        } else {
+            // caso não gere plataforma, avançar lastPlatformX
+            lastPlatformX += 200;
+        }
     }
 }
 
@@ -117,7 +119,7 @@ function update(){
     cameraX = player.x - 100;
     if(cameraX < 0) cameraX = 0;
 
-    // Gerar novas plataformas e moedas
+    // Gerar plataformas e moedas
     spawnPlatformsAndCoins();
 
     // Limpar plataformas/moedas fora da tela
