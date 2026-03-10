@@ -1,13 +1,225 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Side-Scroller Infinito</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Edilane ❤️</title>
+
+<style>
+
+body{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+overflow:hidden;
+font-family:Arial;
+}
+
+/* container do coração */
+
+.container{
+position:relative;
+width:200px;
+height:200px;
+display:flex;
+justify-content:center;
+align-items:center;
+cursor:pointer;
+z-index:2;
+}
+
+/* coração */
+
+.heart{
+position:absolute;
+width:180px;
+height:180px;
+background:red;
+transform:rotate(-45deg);
+animation:beat 1s infinite;
+}
+
+.heart:before,
+.heart:after{
+content:"";
+position:absolute;
+width:180px;
+height:180px;
+background:red;
+border-radius:50%;
+}
+
+.heart:before{
+top:-90px;
+left:0;
+}
+
+.heart:after{
+left:90px;
+top:0;
+}
+
+/* texto */
+
+.text{
+position:absolute;
+color:white;
+font-weight:bold;
+font-size:26px;
+text-align:center;
+z-index:2;
+animation:textBeat 1s infinite;
+}
+
+@keyframes beat{
+0%,100%{transform:scale(1) rotate(-45deg);}
+50%{transform:scale(1.2) rotate(-45deg);}
+}
+
+@keyframes textBeat{
+0%,100%{transform:scale(1);}
+50%{transform:scale(1.2);}
+}
+
+/* partículas */
+
+.particle{
+position:absolute;
+font-size:22px;
+pointer-events:none;
+animation:fly 1s linear forwards;
+}
+
+@keyframes fly{
+0%{
+opacity:1;
+transform:translate(0,0);
+}
+100%{
+opacity:0;
+transform:translate(var(--x),var(--y));
+}
+}
+
+/* chuva */
+
+.fall{
+position:absolute;
+top:-50px;
+font-size:18px;
+animation:fall linear forwards;
+pointer-events:none;
+}
+
+@keyframes fall{
+0%{
+transform:translateY(0);
+opacity:1;
+}
+100%{
+transform:translateY(110vh);
+opacity:0;
+}
+}
+
+</style>
 </head>
-<body>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <script src="game.js"></script>
+
+<body onclick="particles(event)">
+
+<div class="container" onclick="goNext(event)">
+
+<div class="heart"></div>
+
+<div class="text">Eu te amo ❤️</div>
+
+</div>
+
+<script>
+
+/* CHUVA DE CORAÇÕES */
+
+function createRain(){
+
+let item=document.createElement("div");
+item.className="fall";
+
+if(Math.random() < 0.5){
+item.innerHTML="❤️";
+}else{
+item.innerHTML="Eu te amo";
+}
+
+item.style.left=Math.random()*100+"vw";
+item.style.fontSize=(14+Math.random()*20)+"px";
+
+let duration=4+Math.random()*4;
+item.style.animationDuration=duration+"s";
+
+document.body.appendChild(item);
+
+setTimeout(function(){
+item.remove();
+},duration*1000);
+
+}
+
+setInterval(createRain,300);
+
+
+/* PARTICULAS */
+
+function particles(e){
+
+let clickX = e.clientX;
+let clickY = e.clientY;
+
+let icons = ["❤️","🤍🌹"];
+
+for(let i = 0; i < 30; i++){
+
+let particle = document.createElement("div");
+particle.className = "particle";
+
+particle.innerHTML = icons[Math.floor(Math.random()*icons.length)];
+
+let x = (Math.random()*300) - 150;
+let y = (Math.random()*300) - 150;
+
+particle.style.setProperty('--x', x + 'px');
+particle.style.setProperty('--y', y + 'px');
+
+particle.style.left = clickX + "px";
+particle.style.top = clickY + "px";
+
+document.body.appendChild(particle);
+
+setTimeout(function(){
+particle.remove();
+},1000);
+
+}
+
+}
+
+
+/* CLICAR NO CORAÇÃO */
+
+function goNext(e){
+
+e.stopPropagation();
+
+particles(e);
+
+setTimeout(function(){
+window.location.href="presente.html";
+},1000);
+
+}
+
+</script>
+
 </body>
 </html>
