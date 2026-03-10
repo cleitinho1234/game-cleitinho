@@ -33,41 +33,42 @@ generatePlatform(0, 360, 800, 40);
 
 // --- Moedas ---
 let coins = [];
-function generateCoin(x, y){
-    coins.push({x, y, width:20, height:20, collected:false});
+function generateCoinsForPlatform(p){
+    const maxCoins = 2;
+    const coinCount = Math.random() < 0.6 ? Math.floor(Math.random() * (maxCoins + 1)) : 0; 
+    for(let i=0; i<coinCount; i++){
+        const x = p.x + 20 + i*25;
+        const y = p.y - 30;
+        coins.push({x, y, width:20, height:20, collected:false});
+    }
 }
 
 // --- Sistema de scroll ---
 let cameraX = 0;
-let speed = 3; // velocidade de movimento para frente
+let speed = 3;
 let score = 0;
 
-// --- Função para gerar plataformas e moedas à frente ---
+// --- Gerar plataformas à frente ---
 function spawnPlatformsAndCoins(){
-    // Só gerar se não houver plataforma suficiente à frente
-    let lastPlatformX = platforms.length > 0 ? platforms[platforms.length-1].x : 0;
+    let lastPlatformX = platforms[platforms.length-1].x + platforms[platforms.length-1].width;
     while(lastPlatformX < cameraX + canvasWidth + 200){
-        let width = 80 + Math.random()*100;
-        let x = lastPlatformX + 50 + Math.random()*50;
-        let y = 200 + Math.random()*150;
-        generatePlatform(x, y, width, 20);
+        const width = 80 + Math.random()*100;
+        const gap = 50 + Math.random()*100; // espaço entre plataformas
+        const x = lastPlatformX + gap;
+        const y = 200 + Math.random()*100;
 
-        // gerar moedas sobre a plataforma
-        let coinsCount = Math.floor(Math.random()*3)+1;
-        for(let i=0; i<coinsCount; i++){
-            generateCoin(x + 20 + i*25, y - 30);
-        }
+        generatePlatform(x, y, width, 20);
+        generateCoinsForPlatform({x, y, width, height:20});
 
         lastPlatformX = x + width;
     }
 }
 
-// --- Função de atualização ---
+// --- Atualizar ---
 function update(){
     // Movimento horizontal
-    if(keys['ArrowRight']){
-        player.x += speed;
-    }
+    if(keys['ArrowRight']) player.x += speed;
+    if(keys['ArrowLeft'] && player.x > 0) player.x -= speed;
 
     // Pulo
     if(keys['Space'] && player.onGround){
@@ -95,34 +96,35 @@ function update(){
     });
 
     // Colisão com moedas
-    coins.forEach(coin => {
-        if(!coin.collected &&
-           player.x < coin.x + coin.width &&
-           player.x + player.width > coin.x &&
-           player.y < coin.y + coin.height &&
-           player.y + player.height > coin.y){
-               coin.collected = true;
+    coins.forEach(c => {
+        if(!c.collected &&
+           player.x < c.x + c.width &&
+           player.x + player.width > c.x &&
+           player.y < c.y + c.height &&
+           player.y + player.height > c.y){
+               c.collected = true;
                score++;
         }
     });
 
     // Atualizar câmera
     cameraX = player.x - 100;
+    if(cameraX < 0) cameraX = 0;
 
-    // Gerar novas plataformas e moedas
+    // Gerar plataformas e moedas
     spawnPlatformsAndCoins();
 
-    // Remover plataformas e moedas fora da tela
-    platforms = platforms.filter(p => p.x + p.width > cameraX - 100);
-    coins = coins.filter(c => c.x + c.width > cameraX - 100);
+    // Limpar plataformas/moedas fora da tela
+    platforms = platforms.filter(p => p.x + p.width > cameraX - 200);
+    coins = coins.filter(c => c.x + c.width > cameraX - 200);
 }
 
-// --- Função de desenho ---
+// --- Desenhar ---
 function draw(){
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
     ctx.save();
-    ctx.translate(-cameraX, 0); // aplicar scroll
+    ctx.translate(-cameraX, 0);
 
     // Jogador
     ctx.fillStyle = player.color;
@@ -150,7 +152,7 @@ function draw(){
     ctx.fillText('Moedas: ' + score, 10, 30);
 }
 
-// --- Loop principal ---
+// --- Loop ---
 function gameLoop(){
     update();
     draw();
