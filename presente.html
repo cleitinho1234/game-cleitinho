@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Minha Mãe ❤️</title>
+<style>
+body{margin:0;overflow:hidden;font-family:Arial;background:#ffe6f0;}
+.fundo{position:fixed;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;opacity:0.15;z-index:-2;transition:background-image 2s;}
+#primeiroTexto{position:fixed;top:10px;width:100%;text-align:center;font-size:28px;color:#ff1a75;font-weight:bold;display:none;z-index:1000;}
+#fraseEncontro{position:absolute;bottom:40px;width:100%;text-align:center;font-size:26px;color:white;font-weight:bold;display:none;animation:aparecerTexto 2s;}
+@keyframes aparecerTexto{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.estrela{position:absolute;width:3px;height:3px;background:white;border-radius:50%;opacity:0.8;animation:piscar 2s infinite alternate;}
+@keyframes piscar{0%{opacity:0.2;}100%{opacity:1;}}
+h1{text-align:center;margin-top:40px;color:#ff1a75;}
+p{text-align:center;font-size:20px;margin-bottom:30px;}
+.foto{position:absolute;width:120px;height:120px;border-radius:12px;object-fit:cover;cursor:pointer;transition:transform 0.3s;}
+.foto:hover{transform:scale(1.1);}
+.coracao{position:absolute;font-size:20px;opacity:0.6;animation:flutuar linear infinite;}
+@keyframes flutuar{0%{transform:translateY(100vh);}100%{transform:translateY(-100vh);}}
+.viewer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:none;justify-content:center;align-items:center;z-index:999;flex-direction:column;}
+.viewer img{max-width:90%;max-height:80%;border-radius:10px;}
+.voltar{position:absolute;top:20px;left:20px;font-size:40px;color:white;cursor:pointer;}
+.particle{position:absolute;font-size:22px;pointer-events:none;animation:explode 1s linear forwards;}
+@keyframes explode{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--x),var(--y));}}
+</style>
+</head>
+<body>
+
+<div class="fundo" id="fundo"></div>
+
+<audio id="musica" loop>
+<source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<div id="primeiroTexto">Para Minha Mãe Evanilde ❤️</div>
+
+<h1>Alisson Da Cruz Silva ❤️</h1>
+
+<p>
+Com muito amor e gratidão ❤️<br><br>
+<strong>De Alisson Da Cruz Silva</strong><br>
+para<br>
+<strong>Minha Mãe Evanilde</strong><br><br>
+Obrigado por tudo que você fez e continua fazendo por mim. Te amo muito!
+</p>
+
+<img src="foto1.jpg" class="foto">
+<img src="foto2.jpg" class="foto">
+<img src="foto3.jpg" class="foto">
+<img src="foto4.jpg" class="foto">
+<img src="foto5.jpg" class="foto">
+<img src="foto6.jpg" class="foto primeiro">
+<img src="foto7.jpg" class="foto">
+<img src="foto8.jpg" class="foto">
+
+<div class="viewer" id="viewer">
+<div class="voltar" onclick="fechar()">⬅</div>
+<img id="imagemGrande">
+<div id="fraseEncontro">Foi aqui que nossos momentos especiais começaram… ❤️</div>
+</div>
+
+<script>
+/* MUSICA */
+const musica = document.getElementById("musica")
+let musicaIniciada=false
+function tocarMusica(){
+if(musicaIniciada) return
+musicaIniciada=true
+musica.volume=0
+musica.play().catch(()=>{})
+let volume=0
+let fade=setInterval(()=>{
+if(volume<1){volume+=0.02;musica.volume=volume}else{clearInterval(fade)}
+},200)
+}
+window.addEventListener("load",tocarMusica)
+document.addEventListener("click",tocarMusica)
+
+/* FUNDO */
+const fotosFundo=["foto1.jpg","foto2.jpg","foto3.jpg","foto4.jpg","foto5.jpg","foto6.jpg","foto7.jpg","foto8.jpg"]
+let fundo=document.getElementById("fundo")
+let indice=0
+function trocarFundo(){
+fundo.style.backgroundImage="url("+fotosFundo[indice]+")"
+indice++
+if(indice>=fotosFundo.length) indice=0
+}
+trocarFundo()
+setInterval(trocarFundo,5000)
+
+/* ESTRELAS */
+for(let i=0;i<80;i++){
+let estrela=document.createElement("div")
+estrela.className="estrela"
+estrela.style.left=Math.random()*100+"vw"
+estrela.style.top=Math.random()*100+"vh"
+document.body.appendChild(estrela)
+}
+
+/* PARTICULAS */
+function explodirCoracoes(x,y){
+let icons=["❤️","🤍🌹"]
+for(let i=0;i<30;i++){
+let particle=document.createElement("div")
+particle.className="particle"
+particle.innerHTML=icons[Math.floor(Math.random()*icons.length)]
+let dx=(Math.random()*300)-150
+let dy=(Math.random()*300)-150
+particle.style.setProperty('--x',dx+'px')
+particle.style.setProperty('--y',dy+'px')
+particle.style.left=x+"px"
+particle.style.top=y+"px"
+document.body.appendChild(particle)
+setTimeout(()=>particle.remove(),1000)
+}
+}
+
+/* CLIQUE NA TELA PARA PARTICULAS */
+document.addEventListener("click",(e)=>{
+if(e.target.classList.contains("foto")) return
+if(e.target.classList.contains("voltar")) return
+explodirCoracoes(e.clientX,e.clientY)
+})
+
+/* FOTOS */
+const fotos=document.querySelectorAll(".foto")
+const viewer=document.getElementById("viewer")
+const imagemGrande=document.getElementById("imagemGrande")
+
+fotos.forEach(foto=>{
+let x=Math.random()*(window.innerWidth-120)
+let y=Math.random()*(window.innerHeight-120)
+let dx=(Math.random()-0.5)*2
+let dy=(Math.random()-0.5)*2
+foto.style.left=x+"px"
+foto.style.top=y+"px"
+function mover(){
+x+=dx
+y+=dy
+if(x<0||x+120>window.innerWidth) dx*=-1
+if(y<0||y+120>window.innerHeight) dy*=-1
+foto.style.left=x+"px"
+foto.style.top=y+"px"
+requestAnimationFrame(mover)
+}
+mover()
+
+foto.addEventListener("click",(e)=>{
+explodirCoracoes(e.clientX,e.clientY)
+imagemGrande.src=foto.src
+viewer.style.display="flex"
+document.getElementById("fraseEncontro").style.display="none"
+if(foto.classList.contains("primeiro")){
+document.getElementById("primeiroTexto").style.display="block"
+setTimeout(()=>{
+let centroX=window.innerWidth/2
+let centroY=window.innerHeight/2
+for(let i=0;i<30;i++){
+explodirCoracoes(centroX,centroY)
+}
+document.getElementById("fraseEncontro").style.display="block"
+},300)
+}
+})
+})
+
+function fechar(){
+viewer.style.display="none"
+document.getElementById("primeiroTexto").style.display="none"
+document.getElementById("fraseEncontro").style.display="none"
+}
+
+/* CORAÇÕES SUBINDO */
+function criarCoracoes(){
+let heart=document.createElement("div")
+heart.className="coracao"
+heart.innerHTML="❤️"
+heart.style.left=Math.random()*100+"vw"
+heart.style.animationDuration=(5+Math.random()*5)+"s"
+document.body.appendChild(heart)
+setTimeout(()=>heart.remove(),10000)
+}
+setInterval(criarCoracoes,800)
+
+</script>
+</body>
+</html>
