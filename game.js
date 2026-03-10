@@ -17,7 +17,7 @@ const player = {
     onGround: false
 };
 
-// --- Controle ---
+// --- Controles ---
 const keys = {};
 document.addEventListener('keydown', e => keys[e.code] = true);
 document.addEventListener('keyup', e => keys[e.code] = false);
@@ -29,7 +29,7 @@ function generatePlatform(x, y, width, height){
 }
 
 // Plataforma inicial
-generatePlatform(0, 360, 800, 40);
+generatePlatform(0, 360, 800, 40); // chão inicial
 
 // --- Moedas ---
 let coins = [];
@@ -48,23 +48,29 @@ let cameraX = 0;
 let speed = 3;
 let score = 0;
 
-// --- Gerar plataformas à frente ---
+// --- Gerar plataformas e moedas à frente ---
 function spawnPlatformsAndCoins(){
-    let lastPlatformX = platforms[platforms.length-1].x + platforms[platforms.length-1].width;
+    let lastPlatformX = platforms.length > 0 ? platforms[platforms.length-1].x + platforms[platforms.length-1].width : 0;
+
     while(lastPlatformX < cameraX + canvasWidth + 200){
+        // --- Chão contínuo ---
+        generatePlatform(lastPlatformX, 360, 200, 40); // chão infinito
+
+        // --- Plataforma aleatória acima do chão ---
         const width = 80 + Math.random()*100;
-        const gap = 50 + Math.random()*100; // espaço entre plataformas
+        const gap = 50 + Math.random()*100;
         const x = lastPlatformX + gap;
         const y = 200 + Math.random()*100;
-
         generatePlatform(x, y, width, 20);
+
+        // Gerar moedas na plataforma aleatória
         generateCoinsForPlatform({x, y, width, height:20});
 
         lastPlatformX = x + width;
     }
 }
 
-// --- Atualizar ---
+// --- Atualização ---
 function update(){
     // Movimento horizontal
     if(keys['ArrowRight']) player.x += speed;
@@ -111,7 +117,7 @@ function update(){
     cameraX = player.x - 100;
     if(cameraX < 0) cameraX = 0;
 
-    // Gerar plataformas e moedas
+    // Gerar novas plataformas e moedas
     spawnPlatformsAndCoins();
 
     // Limpar plataformas/moedas fora da tela
@@ -152,7 +158,7 @@ function draw(){
     ctx.fillText('Moedas: ' + score, 10, 30);
 }
 
-// --- Loop ---
+// --- Loop principal ---
 function gameLoop(){
     update();
     draw();
